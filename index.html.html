@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>매체 습관 탐정단 - 7일 증거 수첩</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&family=Nanum+Pen+Script&display=swap');
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f7f5f0;
+      color: #2b2b2b;
+    }
+    .handwriting {
+      font-family: 'Nanum Pen Script', cursive;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-200">
+
+  <!-- Top Global Header -->
+  <header class="bg-[#1e293b] text-amber-50 px-4 py-3 shadow-md sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">🔍</span>
+        <div>
+          <h1 class="font-extrabold text-base sm:text-lg tracking-tight flex items-center gap-1.5">
+            매체 습관 탐정단 <span class="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-slate-900 font-semibold">6학년 국어</span>
+          </h1>
+          <p class="text-[11px] text-slate-300">7일 증거 수첩 · 우리 반 미디어 성찰 프로젝트</p>
+        </div>
+      </div>
+      <div id="headerActions" class="flex items-center space-x-2">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl w-full mx-auto p-4 sm:p-6 flex-grow">
+    
+    <!-- 1. LOGIN SCREEN -->
+    <div id="loginScreen" class="py-6 sm:py-10 max-w-lg mx-auto">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-amber-200/80 relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 text-7xl opacity-10 select-none">🕵️</div>
+        <div class="text-center mb-6">
+          <div class="inline-flex p-3 rounded-2xl bg-amber-100 text-amber-800 mb-2">
+            <i data-lucide="shield-search" class="w-8 h-8"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-800">탐정 수사 수첩 접속</h2>
+          <p class="text-sm text-slate-500 mt-1">우리 학교/학급과 내 탐정 번호를 선택하세요!</p>
+        </div>
+
+        <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">학교명</label>
+            <input type="text" id="loginSchool" required value="인천만월초등학교" 
+              class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm font-medium">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">학년</label>
+              <select id="loginGrade" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white font-medium">
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+                <option value="4">4학년</option>
+                <option value="5">5학년</option>
+                <option value="6" selected>6학년</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">학급</label>
+              <select id="loginClass" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white font-medium">
+                <option value="1">1반</option>
+                <option value="2">2반</option>
+                <option value="3" selected>3반</option>
+                <option value="4">4반</option>
+                <option value="5">5반</option>
+                <option value="6">6반</option>
+                <option value="7">7반</option>
+                <option value="8">8반</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">수사관 번호 (1번 ~ 30번)</label>
+            <select id="loginNum" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white font-bold text-slate-800">
+              <!-- 1 to 30 generated in JS -->
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">※ 학생 이름 없이 번호로만 안전하게 기록됩니다.</p>
+          </div>
+
+          <button type="submit" class="w-full mt-2 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-2xl shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition-all">
+            <i data-lucide="folder-search" class="w-5 h-5"></i>
+            <span>내 7일 수사 수첩 열기</span>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-slate-200 text-center">
+          <button onclick="openAdminModal()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 inline-flex items-center gap-1.5 transition">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span>선생님 / 탐정 본부 로그인</span>
+          </button>
+          <div id="cloudStatusBadge" class="mt-2 text-[11px] text-slate-400 flex items-center justify-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-slate-300 inline-block" id="cloudDot"></span>
+            <span id="cloudStatusText">구글 시트 연동 대기</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. STUDENT DASHBOARD SCREEN -->
+    <div id="studentScreen" class="hidden space-y-6">
+      
+      <!-- Profile & Badge Banner -->
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-amber-200/90 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4 w-full sm:w-auto">
+          <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-3xl shadow-inner">
+            🕵️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="studentBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">
+                수습 탐정
+              </span>
+              <span class="text-xs text-slate-500 font-semibold" id="studentSchoolInfo">인천만월초 6학년 3반</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-0.5">
+              <span id="studentDisplayName" class="text-amber-600">3번</span> 수사관의 증거 수첩
+            </h2>
+          </div>
+        </div>
+
+        <!-- Quick Summary Stats -->
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-end text-right">
+          <div class="bg-amber-50 px-3.5 py-2 rounded-2xl border border-amber-200">
+            <span class="text-[11px] font-bold text-amber-700 block">기록한 날수</span>
+            <span class="text-lg font-black text-amber-900" id="recordedDaysCount">0일 / 7일</span>
+          </div>
+          <div class="bg-slate-50 px-3.5 py-2 rounded-2xl border border-slate-200">
+            <span class="text-[11px] font-bold text-slate-500 block">7일 총 이용</span>
+            <span class="text-lg font-black text-slate-800" id="totalMinutesDisplay">0분</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="flex p-1.5 bg-slate-200/80 rounded-2xl max-w-md mx-auto">
+        <button id="tabRecordBtn" onclick="switchStudentTab('record')" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-center transition flex items-center justify-center gap-2 bg-white text-slate-900 shadow-sm">
+          <i data-lucide="edit-3" class="w-4 h-4"></i>
+          <span>30초 매일 기록</span>
+        </button>
+        <button id="tabAnalysisBtn" onclick="switchStudentTab('analysis')" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-center transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          <span>수사 결과 & 또래 비교</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: DAILY 30-SEC RECORD -->
+      <div id="tabRecordContent" class="space-y-5">
+        <!-- Day Selector (Mon to Sun) -->
+        <div class="flex items-center justify-between gap-1 overflow-x-auto pb-1" id="dayTabsContainer">
+          <!-- Mon~Sun Buttons dynamically injected -->
+        </div>
+
+        <!-- Notebook Form Area -->
+        <div class="bg-[#fffdf9] rounded-3xl p-5 sm:p-7 shadow-lg border-2 border-[#e6dbc8] relative">
+          <div class="flex items-center justify-between pb-4 border-b border-[#e2d5bf] mb-6">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">📋</span>
+              <h3 class="text-lg font-bold text-slate-800">
+                <span id="currentSelectedDayText" class="text-amber-600 font-extrabold">월요일</span> 사건 수사 일지
+              </h3>
+            </div>
+            <span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-semibold">
+              30초 기록 규칙: 하루 4번 틈틈이!
+            </span>
+          </div>
+
+          <!-- Slots Container (1.학교가기전, 2.하교후, 3.저녁식사후, 4.잠들기전 독립 카드) -->
+          <div class="space-y-6" id="slotsWrapper">
+            <!-- Dynamically rendered via renderSlotsUI() -->
+          </div>
+
+          <!-- Daily Mood & Total -->
+          <div class="mt-6 p-4 rounded-2xl bg-amber-50/60 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-bold text-slate-700">오늘의 기분:</span>
+              <div class="inline-flex gap-2">
+                <label class="cursor-pointer flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 has-[:checked]:bg-emerald-100 has-[:checked]:border-emerald-400">
+                  <input type="radio" name="dailyMood" value="좋음" class="hidden"> <span>😊 좋음</span>
+                </label>
+                <label class="cursor-pointer flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 has-[:checked]:bg-amber-100 has-[:checked]:border-amber-400">
+                  <input type="radio" name="dailyMood" value="보통" checked class="hidden"> <span>😐 보통</span>
+                </label>
+                <label class="cursor-pointer flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 has-[:checked]:bg-rose-100 has-[:checked]:border-rose-400">
+                  <input type="radio" name="dailyMood" value="아쉬움" class="hidden"> <span>😢 아쉬움</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="text-sm font-extrabold text-slate-800">
+              오늘 하루 합계: <span id="currentDaySumDisplay" class="text-amber-600 text-lg">0</span> 분
+            </div>
+          </div>
+
+          <!-- Save Button -->
+          <div class="mt-6 flex justify-end">
+            <button onclick="saveCurrentDayRecord()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow flex items-center gap-2 transition active:scale-95">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+              <span id="saveBtnText">이 요일 기록 저장하기</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: ANALYSIS & CLASS COMPARISON -->
+      <div id="tabAnalysisContent" class="hidden space-y-6">
+        
+        <!-- Summary Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate-400">나의 1일 평균 이용 시간</span>
+            <div class="my-2">
+              <span class="text-3xl font-black text-slate-900" id="myDailyAvgTime">0</span>
+              <span class="text-sm font-bold text-slate-500">분 / 하루</span>
+            </div>
+            <p class="text-[11px] text-slate-500" id="myTotalSumComment">7일간 총 0분 기록</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate-400">우리 반 1일 평균 시간</span>
+            <div class="my-2">
+              <span class="text-3xl font-black text-amber-600" id="classDailyAvgTime">0</span>
+              <span class="text-sm font-bold text-slate-500">분 / 하루</span>
+            </div>
+            <p class="text-[11px] text-slate-500" id="comparisonComment">학급 평균 대비 계산 중...</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate-400">탐정 수사 메모</span>
+            <div class="my-2 space-y-1">
+              <div class="text-xs font-medium text-slate-700 flex justify-between">
+                <span>🔥 최다 이용 요일:</span>
+                <span class="font-bold text-rose-500" id="maxDayDisplay">-</span>
+              </div>
+              <div class="text-xs font-medium text-slate-700 flex justify-between">
+                <span>🌱 최소 이용 요일:</span>
+                <span class="font-bold text-emerald-600" id="minDayDisplay">-</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-amber-700 font-medium">5일 이상 기록 시 '성실 탐정' 수여!</p>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Chart 1: My 7-Day Trend -->
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="trending-up" class="w-4 h-4 text-amber-500"></i> 요일별 내 매체 이용 추이 (분)
+              </h4>
+            </div>
+            <div class="relative h-56">
+              <canvas id="myWeeklyChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Me vs Class Average -->
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-blue-500"></i> 나와 우리 반 평균 비교 (1일 평균 분)
+              </h4>
+            </div>
+            <div class="relative h-56">
+              <canvas id="comparisonChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: 7-Day Reflection Note -->
+        <div class="bg-[#fffcf4] p-6 rounded-3xl border-2 border-amber-200 shadow-sm space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">✍️</span>
+            <div>
+              <h4 class="font-bold text-base text-slate-900">수사 마무리 성찰 노트</h4>
+              <p class="text-xs text-slate-500">학습지 2쪽: 일주일간 기록해보고 느낀 점을 자유롭게 적어보세요.</p>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">🔍 7일간 기록해 보고 가장 놀란 점이나 발견한 내 습관</label>
+              <textarea id="reflectionSurprise" rows="2" placeholder="예: 평소엔 몰랐는데 잠들기 전에 쇼츠를 1시간이나 보고 있다는 사실에 놀랐다."
+                class="w-full p-3 text-sm rounded-xl border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">🎯 앞으로 실천하고 싶은 나만의 매체 다짐 한 마디</label>
+              <input type="text" id="reflectionGoal" placeholder="예: 밤 10시 이후에는 스마트폰을 책상 위에 두고 침대에 눕겠다!"
+                class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button onclick="saveStudentReflection()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl shadow transition">
+              성찰 노트 저장
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 3. ADMIN (TEACHER DASHBOARD) SCREEN -->
+    <div id="adminScreen" class="hidden space-y-6">
+      
+      <!-- Admin Top Banner -->
+      <div class="bg-slate-900 text-white rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold mb-2">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+            <span>탐정 본부 교사 대시보드</span>
+          </div>
+          <h2 class="text-2xl font-black" id="adminHeaderTitle">인천만월초 6학년 3반 통계 총괄</h2>
+          <p class="text-xs text-slate-300 mt-1">우리 반 1번~30번 탐정들의 7일 수사 기록 현황입니다.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="openConfigModal()" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+            <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+            <span>구글 스프레드시트 연동</span>
+          </button>
+          <button onclick="fetchSheetData(true)" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition border border-slate-700">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>시트 데이터 새로고침</span>
+          </button>
+          <button onclick="exportToCSV()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition border border-slate-700">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>CSV 다운로드</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Class Overview Summary Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">기록 참여 수사관</span>
+          <p class="text-2xl font-extrabold text-slate-900 mt-1"><span id="adminActiveCount">0</span> / 30명</p>
+          <span class="text-[11px] text-emerald-600 font-semibold" id="adminParticipationRate">참여율 0%</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">학급 1일 평균 이용</span>
+          <p class="text-2xl font-extrabold text-amber-600 mt-1"><span id="adminAvgMinutes">0</span> 분</p>
+          <span class="text-[11px] text-slate-400">학생 하루 평균</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">성실 탐정 (5일+)</span>
+          <p class="text-2xl font-extrabold text-indigo-600 mt-1"><span id="adminDiligentCount">0</span> 명</p>
+          <span class="text-[11px] text-slate-400">성실 배지 획득</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">가장 잦은 매체 1위</span>
+          <p class="text-base font-extrabold text-slate-800 mt-2 truncate" id="adminTopActivity">-</p>
+          <span class="text-[11px] text-slate-400">최다 언급 매체</span>
+        </div>
+      </div>
+
+      <!-- Student 30 Table -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+            <span>📋</span> 학급 번호별 수사 현황 (1번 ~ 30번)
+          </h3>
+          <span class="text-xs text-slate-400">번호를 누르면 7일 상세 기록을 봅니다</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-600 text-xs font-bold border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4 text-center w-24">수사관</th>
+                <th class="py-3 px-4 text-center">기록 일수</th>
+                <th class="py-3 px-4 text-right">7일 총합 (분)</th>
+                <th class="py-3 px-4 text-right">1일 평균 (분)</th>
+                <th class="py-3 px-4 text-center">탐정 등급</th>
+                <th class="py-3 px-4 text-center">상세</th>
+              </tr>
+            </thead>
+            <tbody id="adminStudentTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically populated 30 students -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL: ADMIN PASSWORD -->
+  <div id="adminPasswordModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">탐정 본부 암호 입력</h3>
+        <p class="text-xs text-slate-500">선생님 관리용 비밀번호를 입력하세요.</p>
+      </div>
+      <div>
+        <input type="password" id="adminPwdInput" placeholder="비밀번호 입력"
+          class="w-full px-4 py-3 text-center tracking-widest text-lg rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
+        <p id="adminPwdError" class="text-xs text-rose-500 text-center mt-1.5 hidden">암호가 올바르지 않습니다.</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeAdminModal()" class="flex-1 py-2.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">취소</button>
+        <button onclick="verifyAdminPassword()" class="flex-1 py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STUDENT DETAIL MODAL FOR TEACHER -->
+  <div id="studentDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <span id="modalStudentNumber" class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">1번</span>
+          <h3 id="modalStudentName" class="text-xl font-bold text-slate-900">학생 상세 기록</h3>
+        </div>
+        <button onclick="closeStudentDetailModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3" id="modalStudentLogs">
+        <!-- 7 Days breakdown filled dynamically -->
+      </div>
+
+      <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-200 space-y-2 text-xs">
+        <div class="font-bold text-slate-800">✍️ 학생 성찰 메모</div>
+        <div id="modalSurpriseText" class="text-slate-700">놀란 점: -</div>
+        <div id="modalGoalText" class="text-slate-700 font-semibold text-amber-900">나의 다짐: -</div>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button onclick="closeStudentDetailModal()" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GOOGLE SHEET CONFIG FOR TEACHER -->
+  <div id="configModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📊</span>
+          <h3 class="text-lg font-bold text-slate-900">구글 스프레드시트 연동 설정</h3>
+        </div>
+        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="text-xs text-slate-600 space-y-2 bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200">
+        <p class="font-bold text-emerald-900 text-sm">💡 초간단 연동 방법 (1분 완성)</p>
+        <ol class="list-decimal pl-4 space-y-1 text-slate-700">
+          <li>구글 스프레드시트의 <b>[확장 프로그램] > [Apps Script]</b>를 엽니다.</li>
+          <li>기존 코드를 지우고 제공해 드린 스크립트를 붙여넣고 저장(Ctrl+S)합니다.</li>
+          <li>우측 상단 <b>[배포] > [새 배포]</b>를 누르고 유형을 <b>웹 앱</b>으로 선택합니다.</li>
+          <li>액세스 권한을 <b>'모든 사용자(Anyone)'</b>로 변경 후 [배포]를 누릅니다.</li>
+          <li>생성된 <b>웹 앱 URL</b>을 복사해 아래 입력칸에 넣고 저장하면 끝납니다!</li>
+        </ol>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">🔗 Apps Script 웹 앱 배포 URL</label>
+        <input type="url" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+          class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono">
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeConfigModal()" class="px-4 py-2.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">취소</button>
+        <button onclick="saveSheetConfig()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow">URL 저장 및 연동</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simple Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl text-xs font-bold transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+    <i data-lucide="info" class="w-4 h-4 text-amber-400"></i>
+    <span id="toastMessage">안내 메시지</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-100 border-t border-slate-200/80 py-4 text-center text-xs text-slate-500">
+    <p>6학년 국어 '매체 습관 탐정단' · 함께 만드는 슬기로운 미디어 습관</p>
+  </footer>
+
+  <script>
+    /* =========================================================================
+       1. DATA STRUCTURE & INITIALIZATION
+       ========================================================================= */
+    // ★ [선생님 설정 공간] 구글 Apps Script 배포 URL이 기본 탑재되었습니다.
+    // 30명의 학생이 어떤 기기에서 접속하더라도 자동으로 이 스프레드시트로 연동됩니다.
+    const DEFAULT_SHEET_URL = "https://script.google.com/macros/s/AKfycbysHgFmSwv_Gm8QZaHvA6XsVMuBYl6kJExnmTAEf1ZQeEK8LFcJ4LKOw5mHYoExW1q_/exec";
+
+    const STORAGE_KEY = 'DETECTIVE_MEDIA_SHEET_DATA_FINAL';
+    const SHEET_URL_KEY = 'DETECTIVE_SHEET_WEBAPP_URL_FINAL';
+    const DAYS = ['월', '화', '수', '목', '금', '토', '일'];
+    const SLOT_DEFS = [
+      { id: 'before_school', label: '1. 학교 가기 전', icon: '🌅', desc: '아침 기상 후 등교하기 전' },
+      { id: 'after_school',  label: '2. 하교 후',       icon: '🏫', desc: '학교 끝나고 집에 와서' },
+      { id: 'after_dinner',  label: '3. 저녁 식사 후',   icon: '🍽️', desc: '저녁 먹고 휴식할 때' },
+      { id: 'before_bed',    label: '4. 잠들기 전',     icon: '🌙', desc: '침대나 방에서 자기 전' }
+    ];
+
+    let appData = {
+      school: "인천만월초등학교",
+      grade: "6",
+      classNum: "3",
+      students: {}
+    };
+
+    let currentUser = null;
+    let selectedDay = '월';
+    let currentDayDataCache = null;
+    let weeklyChartInstance = null;
+    let comparisonChartInstance = null;
+    let sheetScriptUrl = "";
+
+    function initDatabase() {
+      // 1순위: 브라우저에 별도 저장된 URL, 2순위: 코드에 미리 적어둔 DEFAULT_SHEET_URL
+      sheetScriptUrl = localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL || "";
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          appData = JSON.parse(saved);
+        } catch (e) {
+          createEmptyStudents();
+        }
+      } else {
+        createEmptyStudents();
+      }
+
+      for (let i = 1; i <= 30; i++) {
+        if (!appData.students[String(i)]) {
+          appData.students[String(i)] = { num: String(i), records: {}, reflection: { surprise: '', goal: '' } };
+        }
+      }
+
+      updateSheetStatusUI();
+      if (sheetScriptUrl) {
+        fetchSheetData();
+      }
+    }
+
+    function createEmptyStudents() {
+      appData.school = document.getElementById('loginSchool')?.value || "인천만월초등학교";
+      appData.grade = document.getElementById('loginGrade')?.value || "6";
+      appData.classNum = document.getElementById('loginClass')?.value || "3";
+      appData.students = {};
+
+      for (let i = 1; i <= 30; i++) {
+        appData.students[String(i)] = {
+          num: String(i),
+          records: {},
+          reflection: { surprise: '', goal: '' }
+        };
+      }
+      saveToStorage();
+    }
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+
+    function updateSheetStatusUI() {
+      const dot = document.getElementById('cloudDot');
+      const textEl = document.getElementById('cloudStatusText');
+      if (sheetScriptUrl) {
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block";
+        if (textEl) textEl.textContent = "구글 시트 실시간 연동 중";
+      } else {
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-300 inline-block";
+        if (textEl) textEl.textContent = "구글 시트 미설정 (로컬 모드)";
+      }
+    }
+
+    /* =========================================================================
+       2. GOOGLE SHEETS API COMMUNICATION (doPost & doGet)
+       ========================================================================= */
+    async function sendRecordToSheet(day, slotsData, mood) {
+      if (!sheetScriptUrl) return;
+
+      const payload = {
+        type: "record",
+        school: appData.school,
+        grade: appData.grade,
+        classNum: appData.classNum,
+        num: currentUser.num,
+        day: day,
+        slots: slotsData,
+        mood: mood
+      };
+
+      try {
+        await fetch(sheetScriptUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn("구글 시트 전송 경고:", err);
+      }
+    }
+
+    async function sendReflectionToSheet(surprise, goal) {
+      if (!sheetScriptUrl) return;
+
+      const payload = {
+        type: "reflection",
+        school: appData.school,
+        grade: appData.grade,
+        classNum: appData.classNum,
+        num: currentUser.num,
+        surprise: surprise,
+        goal: goal
+      };
+
+      try {
+        await fetch(sheetScriptUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn("구글 시트 전송 경고:", err);
+      }
+    }
+
+    async function fetchSheetData(showFeedback = false) {
+      if (!sheetScriptUrl) return;
+
+      try {
+        const res = await fetch(sheetScriptUrl);
+        const rows = await res.json();
+
+        if (Array.isArray(rows)) {
+          rows.forEach(r => {
+            const numStr = String(r['번호'] || '').replace('번', '').trim();
+            if (numStr && appData.students[numStr]) {
+              const student = appData.students[numStr];
+              const day = r['요일'];
+              const slot = r['시간대(슬롯)'] || r['슬롯'];
+
+              if (day === '7일성찰') {
+                if (!student.reflection) student.reflection = {};
+                if (r['놀란점']) student.reflection.surprise = r['놀란점'];
+                if (r['다짐']) student.reflection.goal = r['다짐'];
+              } else if (DAYS.includes(day)) {
+                if (!student.records[day]) {
+                  student.records[day] = {
+                    slots: { before_school: [], after_school: [], after_dinner: [], before_bed: [] },
+                    mood: r['오늘기분'] || r['기분'] || '보통'
+                  };
+                }
+                if (r['오늘기분'] || r['기분']) student.records[day].mood = r['오늘기분'] || r['기분'];
+                
+                if (slot && student.records[day].slots[slot]) {
+                  const act = r['활동내역'] || '';
+                  const time = parseInt(r['이용시간(분)']) || 0;
+                  const exists = student.records[day].slots[slot].some(it => it.act === act && it.time === time);
+                  if (!exists && (act || time > 0)) {
+                    student.records[day].slots[slot].push({ act, time });
+                  }
+                }
+              }
+            }
+          });
+
+          saveToStorage();
+          renderLoginNumberOptions();
+
+          if (currentUser) {
+            updateStudentSummary();
+            loadStudentReflection();
+          }
+          const adminScreen = document.getElementById('adminScreen');
+          if (adminScreen && !adminScreen.classList.contains('hidden')) {
+            renderAdminDashboard();
+          }
+
+          if (showFeedback) showToast("구글 스프레드시트 최신 데이터로 동기화되었습니다!");
+        }
+      } catch (err) {
+        console.warn("구글 시트 읽기 실패:", err);
+      }
+    }
+
+    /* =========================================================================
+       3. STUDENT WORKSPACE & SAVE HANDLER
+       ========================================================================= */
+    function renderLoginNumberOptions() {
+      const select = document.getElementById('loginNum');
+      select.innerHTML = '';
+      for (let i = 1; i <= 30; i++) {
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        const recordCount = Object.keys(appData.students[String(i)]?.records || {}).length;
+        opt.textContent = `${i}번 수사관 ${recordCount > 0 ? `(${recordCount}일 기록됨)` : ''}`;
+        select.appendChild(opt);
+      }
+    }
+
+    function handleStudentLogin(e) {
+      e.preventDefault();
+      const school = document.getElementById('loginSchool').value.trim() || "인천만월초등학교";
+      const grade = document.getElementById('loginGrade').value;
+      const classNum = document.getElementById('loginClass').value;
+      const num = document.getElementById('loginNum').value;
+
+      appData.school = school;
+      appData.grade = grade;
+      appData.classNum = classNum;
+
+      if (!appData.students[num]) {
+        appData.students[num] = { num, records: {}, reflection: { surprise: '', goal: '' } };
+      }
+      saveToStorage();
+
+      currentUser = { num };
+      switchToView('student');
+      loadStudentData();
+      showToast(`${num}번 수사관님, 환영합니다!`);
+    }
+
+    function logout() {
+      currentUser = null;
+      switchToView('login');
+      renderLoginNumberOptions();
+      showToast("수첩에서 나왔습니다.");
+    }
+
+    function switchToView(view) {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('studentScreen').classList.add('hidden');
+      document.getElementById('adminScreen').classList.add('hidden');
+
+      const headerActions = document.getElementById('headerActions');
+      headerActions.innerHTML = '';
+
+      if (view === 'login') {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        headerActions.innerHTML = `
+          <button onclick="openAdminModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1 transition">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span>탐정 본부 (교사)</span>
+          </button>
+        `;
+      } else if (view === 'student') {
+        document.getElementById('studentScreen').classList.remove('hidden');
+        headerActions.innerHTML = `
+          <span class="text-xs text-amber-200 hidden sm:inline">접속 번호: <b>${currentUser.num}번</b></span>
+          <button onclick="logout()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700 transition">
+            나가기
+          </button>
+        `;
+      } else if (view === 'admin') {
+        document.getElementById('adminScreen').classList.remove('hidden');
+        headerActions.innerHTML = `
+          <button onclick="logout()" class="text-xs bg-rose-900/60 hover:bg-rose-900 text-rose-200 px-3 py-1.5 rounded-xl border border-rose-800 transition">
+            본부 닫기
+          </button>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    function loadStudentData() {
+      const student = appData.students[currentUser.num];
+      document.getElementById('studentDisplayName').textContent = `${student.num}번`;
+      document.getElementById('studentSchoolInfo').textContent = `${appData.school} ${appData.grade}학년 ${appData.classNum}반`;
+
+      renderDayTabs();
+      loadDayRecord(selectedDay);
+      updateStudentSummary();
+      loadStudentReflection();
+    }
+
+    function renderDayTabs() {
+      const container = document.getElementById('dayTabsContainer');
+      container.innerHTML = '';
+      const student = appData.students[currentUser.num];
+
+      DAYS.forEach(day => {
+        const hasData = !!(student.records[day]);
+        const isSelected = (day === selectedDay);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => {
+          selectedDay = day;
+          renderDayTabs();
+          loadDayRecord(day);
+        };
+        btn.className = `flex-1 min-w-[46px] py-2 px-1 text-xs font-bold rounded-xl flex flex-col items-center justify-center transition border ${
+          isSelected 
+            ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-md scale-105'
+            : hasData 
+              ? 'bg-white text-slate-700 border-amber-200 hover:bg-amber-50' 
+              : 'bg-slate-100 text-slate-400 border-transparent hover:bg-slate-200'
+        }`;
+        
+        btn.innerHTML = `
+          <span>${day}</span>
+          <span class="text-[9px] mt-0.5">${hasData ? '● 완료' : '○'}</span>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function loadDayRecord(day) {
+      document.getElementById('currentSelectedDayText').textContent = `${day}요일`;
+      const student = appData.students[currentUser.num];
+      const rec = student.records[day];
+
+      currentDayDataCache = {
+        slots: {
+          before_school: [{ act: '', time: '' }],
+          after_school:  [{ act: '', time: '' }],
+          after_dinner:  [{ act: '', time: '' }],
+          before_bed:    [{ act: '', time: '' }]
+        },
+        mood: '보통'
+      };
+
+      if (rec && rec.slots) {
+        SLOT_DEFS.forEach(def => {
+          if (rec.slots[def.id] && Array.isArray(rec.slots[def.id]) && rec.slots[def.id].length > 0) {
+            currentDayDataCache.slots[def.id] = JSON.parse(JSON.stringify(rec.slots[def.id]));
+          }
+        });
+        currentDayDataCache.mood = rec.mood || '보통';
+      }
+
+      renderSlotsUI();
+
+      const moodRadios = document.querySelectorAll('input[name="dailyMood"]');
+      moodRadios.forEach(r => {
+        r.checked = (r.value === currentDayDataCache.mood);
+      });
+
+      calculateDailySumLive();
+    }
+
+    function renderSlotsUI() {
+      const container = document.getElementById('slotsWrapper');
+      container.innerHTML = '';
+
+      SLOT_DEFS.forEach(slotDef => {
+        const slotBox = document.createElement('div');
+        slotBox.className = 'p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3';
+
+        const items = currentDayDataCache.slots[slotDef.id] || [{ act: '', time: '' }];
+
+        let itemsHtml = '';
+        items.forEach((item, index) => {
+          const isExtra = index > 0;
+          itemsHtml += `
+            <div class="p-3 rounded-xl ${isExtra ? 'bg-amber-50/50 border border-dashed border-amber-200' : 'bg-slate-50/70 border border-slate-100'} space-y-2">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                <div class="sm:col-span-8 flex items-center gap-2">
+                  <input type="text" 
+                    placeholder="어떤 매체를 이용했나요? (예: 유튜브, 게임, 웹툰)"
+                    value="${item.act ? escapeHtml(item.act) : ''}"
+                    onchange="updateSlotItem('${slotDef.id}', ${index}, 'act', this.value)"
+                    class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+                  ${isExtra ? `
+                    <button type="button" onclick="removeSlotItem('${slotDef.id}', ${index})" 
+                      title="항목 삭제" class="p-2 text-rose-500 hover:bg-rose-100 rounded-lg transition shrink-0">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  ` : ''}
+                </div>
+                <div class="sm:col-span-4 flex items-center gap-2 justify-end">
+                  <input type="number" min="0" max="600" placeholder="0"
+                    value="${item.time !== '' && item.time !== undefined && item.time !== null ? item.time : ''}"
+                    oninput="updateSlotItem('${slotDef.id}', ${index}, 'time', this.value); calculateDailySumLive();"
+                    class="w-full px-3.5 py-2 text-sm font-bold text-right rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+                  <span class="text-sm font-bold text-slate-600 shrink-0">분</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5 pt-0.5">
+                <button type="button" onclick="setSlotChip('${slotDef.id}', ${index}, '유튜브 쇼츠')" class="px-2 py-0.5 rounded-md text-[11px] bg-white border border-slate-200 hover:bg-slate-100 text-slate-600">유튜브 쇼츠</button>
+                <button type="button" onclick="setSlotChip('${slotDef.id}', ${index}, '인스타 릴스')" class="px-2 py-0.5 rounded-md text-[11px] bg-white border border-slate-200 hover:bg-slate-100 text-slate-600">릴스/틱톡</button>
+                <button type="button" onclick="setSlotChip('${slotDef.id}', ${index}, '웹툰 보기')" class="px-2 py-0.5 rounded-md text-[11px] bg-white border border-slate-200 hover:bg-slate-100 text-slate-600">웹툰</button>
+                <button type="button" onclick="setSlotChip('${slotDef.id}', ${index}, '모바일/PC 게임')" class="px-2 py-0.5 rounded-md text-[11px] bg-white border border-slate-200 hover:bg-slate-100 text-slate-600">게임</button>
+                <button type="button" onclick="setSlotChip('${slotDef.id}', ${index}, 'TV/OTT 영상')" class="px-2 py-0.5 rounded-md text-[11px] bg-white border border-slate-200 hover:bg-slate-100 text-slate-600">TV/OTT</button>
+                <button type="button" onclick="setSlotChip('${slotDef.id}', ${index}, '이용 안 함')" class="px-2 py-0.5 rounded-md text-[11px] bg-white border border-slate-200 hover:bg-slate-100 text-slate-500">이용 안 함</button>
+              </div>
+            </div>
+          `;
+        });
+
+        slotBox.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="text-base">${slotDef.icon}</span>
+              <span class="text-sm font-extrabold text-slate-800">${slotDef.label}</span>
+              <span class="text-xs text-slate-400 font-normal hidden sm:inline">(${slotDef.desc})</span>
+            </div>
+            <button type="button" onclick="addSlotItem('${slotDef.id}')"
+              class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold rounded-lg border border-amber-200 flex items-center gap-1 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>+ 항목 추가</span>
+            </button>
+          </div>
+          <div class="space-y-2 mt-2">
+            ${itemsHtml}
+          </div>
+        `;
+
+        container.appendChild(slotBox);
+      });
+
+      lucide.createIcons();
+    }
+
+    function addSlotItem(slotId) {
+      if (!currentDayDataCache.slots[slotId]) {
+        currentDayDataCache.slots[slotId] = [];
+      }
+      currentDayDataCache.slots[slotId].push({ act: '', time: '' });
+      renderSlotsUI();
+    }
+
+    function removeSlotItem(slotId, index) {
+      if (currentDayDataCache.slots[slotId] && currentDayDataCache.slots[slotId].length > 1) {
+        currentDayDataCache.slots[slotId].splice(index, 1);
+        renderSlotsUI();
+        calculateDailySumLive();
+      }
+    }
+
+    function updateSlotItem(slotId, index, key, value) {
+      if (!currentDayDataCache.slots[slotId][index]) return;
+      if (key === 'time') {
+        currentDayDataCache.slots[slotId][index][key] = value === '' ? '' : parseInt(value) || 0;
+      } else {
+        currentDayDataCache.slots[slotId][index][key] = value;
+      }
+    }
+
+    function setSlotChip(slotId, index, text) {
+      if (!currentDayDataCache.slots[slotId][index]) return;
+      currentDayDataCache.slots[slotId][index].act = text;
+      renderSlotsUI();
+    }
+
+    function calculateDailySumLive() {
+      let sum = 0;
+      if (currentDayDataCache && currentDayDataCache.slots) {
+        Object.values(currentDayDataCache.slots).forEach(items => {
+          items.forEach(it => {
+            const t = parseInt(it.time) || 0;
+            sum += t;
+          });
+        });
+      }
+      document.getElementById('currentDaySumDisplay').textContent = sum;
+    }
+
+    function saveCurrentDayRecord() {
+      const mood = document.querySelector('input[name="dailyMood"]:checked')?.value || '보통';
+      const student = appData.students[currentUser.num];
+
+      student.records[selectedDay] = {
+        slots: JSON.parse(JSON.stringify(currentDayDataCache.slots)),
+        mood: mood,
+        updatedAt: new Date().toISOString()
+      };
+
+      saveToStorage();
+      renderDayTabs();
+      updateStudentSummary();
+
+      sendRecordToSheet(selectedDay, currentDayDataCache.slots, mood);
+      showToast(`${selectedDay}요일 증거 기록이 안전하게 저장되었습니다!`);
+    }
+
+    function updateStudentSummary() {
+      const student = appData.students[currentUser.num];
+      const recordedDays = Object.keys(student.records || {});
+      const daysCount = recordedDays.length;
+
+      const badgeEl = document.getElementById('studentBadge');
+      if (daysCount >= 5) {
+        badgeEl.textContent = '🌟 성실 탐정 달성!';
+        badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shadow-sm';
+      } else if (daysCount >= 3) {
+        badgeEl.textContent = '🕵️ 정식 탐정';
+        badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800';
+      } else {
+        badgeEl.textContent = '🔍 수습 탐정';
+        badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700';
+      }
+
+      document.getElementById('recordedDaysCount').textContent = `${daysCount}일 / 7일`;
+
+      let totalMins = 0;
+      let dayTotals = {};
+
+      DAYS.forEach(day => {
+        const r = student.records[day];
+        if (r && r.slots) {
+          let daySum = 0;
+          Object.values(r.slots).forEach(items => {
+            items.forEach(it => { daySum += (parseInt(it.time) || 0); });
+          });
+          dayTotals[day] = daySum;
+          totalMins += daySum;
+        } else {
+          dayTotals[day] = 0;
+        }
+      });
+
+      // 1일 평균: 실제 응답한 일수로 나눔
+      const myDailyAvg = daysCount > 0 ? Math.round(totalMins / daysCount) : 0;
+
+      document.getElementById('totalMinutesDisplay').textContent = `${totalMins}분`;
+      document.getElementById('myDailyAvgTime').textContent = myDailyAvg;
+      document.getElementById('myTotalSumComment').textContent = `${daysCount}일 기록 (총 ${totalMins}분 / ${Math.floor(totalMins / 60)}시간 ${totalMins % 60}분)`;
+
+      let maxDay = '-', minDay = '-';
+      let maxVal = -1, minVal = 999999;
+      DAYS.forEach(d => {
+        if (student.records[d]) {
+          const val = dayTotals[d];
+          if (val > maxVal) { maxVal = val; maxDay = `${d}요일 (${val}분)`; }
+          if (val < minVal) { minVal = val; minDay = `${d}요일 (${val}분)`; }
+        }
+      });
+
+      document.getElementById('maxDayDisplay').textContent = maxDay;
+      document.getElementById('minDayDisplay').textContent = minDay;
+
+      const classStats = calculateClassStats();
+      document.getElementById('classDailyAvgTime').textContent = classStats.avgDailyPerStudent;
+
+      const diff = myDailyAvg - classStats.avgDailyPerStudent;
+      const compEl = document.getElementById('comparisonComment');
+      if (diff > 0) {
+        compEl.textContent = `우리 반 평균보다 하루에 ${diff}분 더 많이 이용해요.`;
+        compEl.className = 'text-[11px] text-rose-600 font-semibold';
+      } else if (diff < 0) {
+        compEl.textContent = `우리 반 평균보다 하루에 ${Math.abs(diff)}분 적게 건강히 이용해요!`;
+        compEl.className = 'text-[11px] text-emerald-600 font-semibold';
+      } else {
+        compEl.textContent = '우리 반 평균과 비슷한 이용 시간입니다.';
+        compEl.className = 'text-[11px] text-slate-500';
+      }
+
+      renderStudentCharts(dayTotals, myDailyAvg, classStats.avgDailyPerStudent);
+    }
+
+    function switchStudentTab(tab) {
+      const recordBtn = document.getElementById('tabRecordBtn');
+      const analysisBtn = document.getElementById('tabAnalysisBtn');
+      const recordContent = document.getElementById('tabRecordContent');
+      const analysisContent = document.getElementById('tabAnalysisContent');
+
+      if (tab === 'record') {
+        recordBtn.className = 'flex-1 py-2.5 rounded-xl font-bold text-sm text-center transition flex items-center justify-center gap-2 bg-white text-slate-900 shadow-sm';
+        analysisBtn.className = 'flex-1 py-2.5 rounded-xl font-bold text-sm text-center transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900';
+        recordContent.classList.remove('hidden');
+        analysisContent.classList.add('hidden');
+      } else {
+        analysisBtn.className = 'flex-1 py-2.5 rounded-xl font-bold text-sm text-center transition flex items-center justify-center gap-2 bg-white text-slate-900 shadow-sm';
+        recordBtn.className = 'flex-1 py-2.5 rounded-xl font-bold text-sm text-center transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900';
+        recordContent.classList.add('hidden');
+        analysisContent.classList.remove('hidden');
+        updateStudentSummary();
+      }
+      lucide.createIcons();
+    }
+
+    function renderStudentCharts(myDayTotals, myDailyAvg, classDailyAvg) {
+      const ctx1 = document.getElementById('myWeeklyChart');
+      if (ctx1) {
+        if (weeklyChartInstance) weeklyChartInstance.destroy();
+        weeklyChartInstance = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels: DAYS.map(d => d + '요일'),
+            datasets: [{
+              label: '이용 시간(분)',
+              data: DAYS.map(d => myDayTotals[d] || 0),
+              backgroundColor: 'rgba(245, 158, 11, 0.75)',
+              borderColor: '#d97706',
+              borderWidth: 2,
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, suggestedMax: 60 } }
+          }
+        });
+      }
+
+      const ctx2 = document.getElementById('comparisonChart');
+      if (ctx2) {
+        if (comparisonChartInstance) comparisonChartInstance.destroy();
+        comparisonChartInstance = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: ['나의 하루 평균', '우리 반 하루 평균'],
+            datasets: [{
+              data: [myDailyAvg, classDailyAvg],
+              backgroundColor: ['#f59e0b', '#10b981'],
+              borderRadius: 12,
+              barThickness: 45
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, suggestedMax: Math.max(myDailyAvg, classDailyAvg, 60) + 20 } }
+          }
+        });
+      }
+    }
+
+    function loadStudentReflection() {
+      const student = appData.students[currentUser.num];
+      document.getElementById('reflectionSurprise').value = student.reflection?.surprise || '';
+      document.getElementById('reflectionGoal').value = student.reflection?.goal || '';
+    }
+
+    function saveStudentReflection() {
+      const student = appData.students[currentUser.num];
+      const surprise = document.getElementById('reflectionSurprise').value.trim();
+      const goal = document.getElementById('reflectionGoal').value.trim();
+
+      student.reflection = { surprise, goal };
+      saveToStorage();
+      sendReflectionToSheet(surprise, goal);
+      showToast("수사 성찰 노트가 저장되었습니다.");
+    }
+
+    /* =========================================================================
+       4. TEACHER / ADMIN LOGIC
+       ========================================================================= */
+    // 'manwol603'의 SHA-256 해시값 (비밀번호 평문 미노출)
+    const ADMIN_PW_HASH = '666bb6eec0f99335832aeb41d3c52a46c3b6f125a1d13f9f6e1654460f15c1fa';
+
+    async function hashPassword(str) {
+      const buffer = new TextEncoder().encode(str);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminPwdInput').value = '';
+      document.getElementById('adminPwdError').classList.add('hidden');
+      document.getElementById('adminPasswordModal').classList.remove('hidden');
+      document.getElementById('adminPwdInput').focus();
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminPasswordModal').classList.add('hidden');
+    }
+
+    async function verifyAdminPassword() {
+      const pwd = document.getElementById('adminPwdInput').value;
+      const hashed = await hashPassword(pwd);
+      if (hashed === ADMIN_PW_HASH) {
+        closeAdminModal();
+        switchToView('admin');
+        renderAdminDashboard();
+        showToast("탐정 본부 대시보드에 접속했습니다.");
+      } else {
+        document.getElementById('adminPwdError').classList.remove('hidden');
+      }
+    }
+
+    function calculateClassStats() {
+      let activeStudents = 0;
+      let totalRecordedDaysAll = 0;
+      let totalMinutesAll = 0;
+      let diligentCount = 0;
+      const activityFreq = {};
+
+      for (let i = 1; i <= 30; i++) {
+        const student = appData.students[String(i)];
+        if (!student) continue;
+
+        const recordDays = Object.keys(student.records || {});
+        if (recordDays.length > 0) {
+          activeStudents++;
+          totalRecordedDaysAll += recordDays.length;
+        }
+        if (recordDays.length >= 5) diligentCount++;
+
+        recordDays.forEach(day => {
+          const rec = student.records[day];
+          if (rec && rec.slots) {
+            Object.values(rec.slots).forEach(items => {
+              items.forEach(it => {
+                const time = parseInt(it.time) || 0;
+                totalMinutesAll += time;
+                if (it.act && it.act !== '이용 안 함') {
+                  activityFreq[it.act] = (activityFreq[it.act] || 0) + 1;
+                }
+              });
+            });
+          }
+        });
+      }
+
+      const avgDailyPerStudent = totalRecordedDaysAll > 0 
+        ? Math.round(totalMinutesAll / totalRecordedDaysAll) 
+        : 0;
+
+      let topActivity = "-";
+      let topCount = 0;
+      Object.entries(activityFreq).forEach(([name, count]) => {
+        if (count > topCount) {
+          topCount = count;
+          topActivity = name;
+        }
+      });
+
+      return {
+        activeStudents,
+        totalMinutesAll,
+        avgDailyPerStudent,
+        diligentCount,
+        topActivity
+      };
+    }
+
+    function renderAdminDashboard() {
+      const stats = calculateClassStats();
+
+      document.getElementById('adminHeaderTitle').textContent = `${appData.school} ${appData.grade}학년 ${appData.classNum}반 통계 총괄`;
+      document.getElementById('adminActiveCount').textContent = stats.activeStudents;
+      document.getElementById('adminParticipationRate').textContent = `참여율 ${Math.round((stats.activeStudents / 30) * 100)}%`;
+      document.getElementById('adminAvgMinutes').textContent = stats.avgDailyPerStudent;
+      document.getElementById('adminDiligentCount').textContent = stats.diligentCount;
+      document.getElementById('adminTopActivity').textContent = stats.topActivity;
+
+      const tbody = document.getElementById('adminStudentTableBody');
+      tbody.innerHTML = '';
+
+      for (let i = 1; i <= 30; i++) {
+        const student = appData.students[String(i)] || { num: String(i), records: {} };
+        const recordDaysCount = Object.keys(student.records || {}).length;
+        
+        let studentTotalMins = 0;
+        Object.values(student.records || {}).forEach(r => {
+          if (r && r.slots) {
+            Object.values(r.slots).forEach(items => {
+              items.forEach(it => {
+                studentTotalMins += (parseInt(it.time) || 0);
+              });
+            });
+          }
+        });
+        const dailyAvg = recordDaysCount > 0 ? Math.round(studentTotalMins / recordDaysCount) : 0;
+
+        let badgeHtml = '<span class="px-2 py-0.5 rounded text-[11px] bg-slate-100 text-slate-500">수습 탐정</span>';
+        if (recordDaysCount >= 5) {
+          badgeHtml = '<span class="px-2 py-0.5 rounded text-[11px] bg-amber-100 text-amber-800 font-bold">🌟 성실 탐정</span>';
+        } else if (recordDaysCount >= 3) {
+          badgeHtml = '<span class="px-2 py-0.5 rounded text-[11px] bg-blue-100 text-blue-700 font-semibold">정식 탐정</span>';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-amber-50/50 transition cursor-pointer';
+        tr.onclick = (e) => {
+          if (!e.target.closest('button')) openStudentDetailModal(String(i));
+        };
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-center font-bold text-slate-900">${i}번 수사관</td>
+          <td class="py-3 px-4 text-center">
+            <span class="inline-flex items-center gap-1 font-bold ${recordDaysCount >= 5 ? 'text-amber-600' : 'text-slate-600'}">
+              ${recordDaysCount}일 / 7
+            </span>
+          </td>
+          <td class="py-3 px-4 text-right font-medium">${studentTotalMins}분</td>
+          <td class="py-3 px-4 text-right font-bold text-slate-800">${dailyAvg}분</td>
+          <td class="py-3 px-4 text-center">${badgeHtml}</td>
+          <td class="py-3 px-4 text-center">
+            <button onclick="openStudentDetailModal('${i}')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+              수첩 보기
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function openStudentDetailModal(studentNum) {
+      const student = appData.students[studentNum];
+      if (!student) return;
+
+      document.getElementById('modalStudentNumber').textContent = `${student.num}번`;
+      document.getElementById('modalStudentName').textContent = `${student.num}번 수사관의 증거 수첩`;
+
+      const logsContainer = document.getElementById('modalStudentLogs');
+      logsContainer.innerHTML = '';
+
+      DAYS.forEach(day => {
+        const r = student.records[day];
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'p-3 rounded-xl border border-slate-200 text-xs ' + (r ? 'bg-white' : 'bg-slate-50 opacity-60');
+
+        if (r && r.slots) {
+          let dayTotal = 0;
+          let detailsHtml = '';
+
+          SLOT_DEFS.forEach(slotDef => {
+            const items = r.slots[slotDef.id] || [];
+            const validItems = items.filter(it => it.act || (it.time !== '' && it.time > 0));
+            if (validItems.length > 0) {
+              const itemTexts = validItems.map(it => {
+                const t = parseInt(it.time) || 0;
+                dayTotal += t;
+                return `${it.act || '매체'} (${t}분)`;
+              }).join(', ');
+              detailsHtml += `<div>• <span class="font-semibold text-slate-700">${slotDef.label.replace(/^[0-9]\.\s*/, '')}</span>: ${itemTexts}</div>`;
+            }
+          });
+
+          dayDiv.innerHTML = `
+            <div class="flex items-center justify-between font-bold text-slate-800 mb-1">
+              <span>${day}요일 (기분: ${r.mood || '보통'})</span>
+              <span class="text-amber-600 font-extrabold">${dayTotal}분</span>
+            </div>
+            <div class="text-[11px] text-slate-600 space-y-0.5">
+              ${detailsHtml || '<div class="text-slate-400">활동 내역 없음</div>'}
+            </div>
+          `;
+        } else {
+          dayDiv.innerHTML = `<div class="font-bold text-slate-400">${day}요일: 기록 없음</div>`;
+        }
+        logsContainer.appendChild(dayDiv);
+      });
+
+      document.getElementById('modalSurpriseText').textContent = `놀란 점: ${student.reflection?.surprise || '아직 작성되지 않음'}`;
+      document.getElementById('modalGoalText').textContent = `나의 다짐: ${student.reflection?.goal || '아직 작성되지 않음'}`;
+
+      document.getElementById('studentDetailModal').classList.remove('hidden');
+    }
+
+    function closeStudentDetailModal() {
+      document.getElementById('studentDetailModal').classList.add('hidden');
+    }
+
+    /* Google Sheets Config Modal */
+    function openConfigModal() {
+      document.getElementById('sheetUrlInput').value = sheetScriptUrl;
+      document.getElementById('configModal').classList.remove('hidden');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.add('hidden');
+    }
+
+    function saveSheetConfig() {
+      const url = document.getElementById('sheetUrlInput').value.trim();
+      sheetScriptUrl = url;
+      if (url) {
+        localStorage.setItem(SHEET_URL_KEY, url);
+        updateSheetStatusUI();
+        closeConfigModal();
+        showToast("구글 스프레드시트 연동 URL이 저장되었습니다!");
+        fetchSheetData(true);
+      } else {
+        localStorage.removeItem(SHEET_URL_KEY);
+        updateSheetStatusUI();
+        closeConfigModal();
+        showToast("연동 URL이 삭제되어 로컬 모드로 전환되었습니다.");
+      }
+    }
+
+    function exportToCSV() {
+      let csv = "\uFEFF번호,기록일수,7일총합(분),1일평균(분),놀란점,다짐\n";
+      for (let i = 1; i <= 30; i++) {
+        const st = appData.students[String(i)];
+        if (!st) continue;
+        const days = Object.keys(st.records || {}).length;
+        let sum = 0;
+        Object.values(st.records || {}).forEach(r => {
+          if (r && r.slots) {
+            Object.values(r.slots).forEach(items => {
+              items.forEach(it => { sum += (parseInt(it.time) || 0); });
+            });
+          }
+        });
+        const avg = days > 0 ? Math.round(sum / days) : 0;
+        const surprise = `"${(st.reflection?.surprise || '').replace(/"/g, '""')}"`;
+        const goal = `"${(st.reflection?.goal || '').replace(/"/g, '""')}"`;
+        csv += `${st.num}번,${days},${sum},${avg},${surprise},${goal}\n`;
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `${appData.school}_${appData.grade}학년${appData.classNum}반_매체이용기록.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("CSV 파일이 다운로드되었습니다.");
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2600);
+    }
+
+    window.onload = function() {
+      initDatabase();
+      renderLoginNumberOptions();
+      switchToView('login');
+      lucide.createIcons();
+    };
+  </script>
+</body>
+</html>
